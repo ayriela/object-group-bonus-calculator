@@ -39,9 +39,29 @@ const employees = [
 
 // This is not a race. Everyone on your team should understand what is happening.
 // Ask questions when you don't.
-for (i in employees){
-  console.log( newEmployeeData(employees[i]) );
-}
+
+//retrieve bonus info when user clicks the button 
+
+//call within ready function to make sure DOM is loaded 
+//use getEmployeeBonus reference name instead of function call so you don't accidentally call before click action
+//event trigger needs to be within function call though to use that reference name 
+$(document).ready(function(){
+  $('#getBonus').on('click', getEmployeeBonus) 
+});
+
+
+
+
+function getEmployeeBonus(){
+  let finalEmployee=[];
+  for (i in employees){
+    console.log( newEmployeeData(employees[i]));
+    //build new array to use for display
+    finalEmployee.push(newEmployeeData(employees[i]));
+  } 
+  displayEmployeeBonuses(finalEmployee);
+}//end getEmployeeBonus
+
 
 function newEmployeeData(employee){
   //create object to be filled
@@ -60,7 +80,7 @@ function newEmployeeData(employee){
      updateEmployee = {
         name: employee.name,
         bonusPercent: 0,
-        totalCompensation: employee.annualSalary,
+        totalCompensation: Number(employee.annualSalary),
         totalBonus: 0
      };//set new object for employees with no bonus
   }
@@ -93,4 +113,24 @@ function calculateBonus(employee){
   }
   //for debugconsole.log(bonusPercent);
   return bonusPercent;
-};//end calculateBonus
+}//end calculateBonus
+
+function displayEmployeeBonuses(employeeList){
+  let str = '<ul>';
+  for (i in employeeList){
+      //build list to display employee data
+      str += '<li>' + employeeList[i].name + 
+      //create sub-list to display additional details
+      '<ul><li> Bonus Percentage: ' + 
+      //format percent as whole number
+      Number(employeeList[i].bonusPercent) * 100 + '% </li>' +
+       //format total bonus as money
+       '<li> Total Bonus: $' + (employeeList[i].totalBonus).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + '</li>' +
+      //format total compensation as money
+      '<li> Total Compensation: $' + (employeeList[i].totalCompensation).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + '</li></ul></li>'
+    }
+    str += '</ul>';
+    document.getElementById("employeeData").innerHTML = str;
+}
+
+
